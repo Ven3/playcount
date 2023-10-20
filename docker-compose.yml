@@ -1,0 +1,49 @@
+version: "3"
+name: "playcount"
+
+services:
+
+  python:
+    image: python:3.10.6
+    container_name: python310
+    volumes:
+      - ./bilibili.py:/playcount/bilibili.py
+      - ./run.sh:/playcount/run.sh
+    
+    command: bash /playcount/run.sh
+    
+    
+
+  # Proxy 1
+  redis4proxypool:
+    image: redis:6.2
+    container_name: redis_1
+    restart: always
+    # ports:
+    #   - "6374:6379"
+  proxypool:
+    image: "germey/proxypool:master"
+    container_name: proxy_1
+    ports:
+      - "5555:5555"
+    restart: always
+    # volumes:
+    #   - proxypool/crawlers/private:/app/proxypool/crawlers/private
+    environment:
+      PROXYPOOL_REDIS_HOST: redis4proxypool
+
+  # Proxy 2
+  proxy_pool:
+    image: jhao104/proxy_pool:2.4.1
+    container_name: pool_2
+    restart: always
+    ports:
+      - "5010:5010"
+    links:
+      - proxy_redis
+    environment:
+      DB_CONN: "redis://@proxy_redis:6379/0"
+  proxy_redis:
+    image: redis:6.2
+    container_name: redis_2
+    restart: always
