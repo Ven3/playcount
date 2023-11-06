@@ -4,11 +4,68 @@
 
 为bilibili而来, 用来刷B站播放量, 懂的都懂
 
-## 使用说明
+## 使用方式 - 推荐使用第1种方式
+
+### shell脚本 + 浏览器方式:
+
+仅Windows可用, 编辑 [bilibili.sh](./bilibili.sh) 脚本, 修改 **bvid** 和 **profiles** 两个参数, 然后直接执行该脚本即可, 需要注意的是, 最好安装git客户端, 用 git-bash 来跑, 有时候 powershell可能跑失败
+Tips: 如果是多个浏览器, 建议每个浏览器登录不同的账号, 这样效率会高一点
+**优点**: 可以一直刷
+**缺点**: 耗时比较长, 每个浏览器大概每6分钟刷一次播放
+
+![1699284501664](image/README/1699284501664.png)
+
+### 使用 **python** 运行 且 **不使用代理池** :
+
+修改 [bilibili_noproxy.py](./bilibili_noproxy.py) 文件, 将bvid填写到bvids里面, 然后在终端执行下面命令即可
+
+```powershell
+python bilibili_noproxy.py
+```
+
+**优点**: 简单, 不依赖浏览器, 只需要调用接口就能刷播放量
+**缺点**: 耗时比较长, 大概每6分钟刷一次播放, 而且不能一直刷, 刷到一定播放量之后就不能再刷了
+
+![1699284888241](image/README/1699284888241.png)
+
+### 使用 **docker** + **代理池** :
+
+**目前该方案我在实际使用的过程中效果跟第2种方法是一样的, 代理池使用了还是不管用, emmm, 所以你自己慢慢研究吧**
+**优点**: docker执行, 可以使用代理池, 不依赖浏览器, 只需要调用接口就能刷播放量
+**缺点**: 耗时比较长, 刷一次之后, 要过一段时间才能刷下一次播放, 而且不能一直刷, 刷到一定播放量之后就不能再刷了
+
+1. 安装docker, 下载地址: [docker](https://www.docker.com/products/docker-desktop/) , 安装, 安装完成之后, 启动docker
+2. 修改脚本, 修改 [bilibili.py](./bilibili.py) , 将bvid填写到bvids里面
+   ![1699284888241](image/README/1699284888241.png)
+3. **开始执行脚本**
+   在该目录下, 在终端中执行以下命令, Container 全部状态 started表示启动成功
+
+```powershell
+docker compose up -d
+```
+
+![1699286828972](image/README/1699286828972.png)
+
+4. 查看日志, 执行以下命令, 看到日志有输出"准备起飞啦~~~"且后面中括号中有你要刷播放量的视频bvid, 表示脚本执行成功了
+
+```
+docker logs python310
+```
+
+![1699286983019](image/README/1699286983019.png)
+
+5. **停止刷**
+   继续在该目录下, 在终端中执行以下命令
+
+```
+docker compose down
+```
+
+综上所述, 推荐使用 **第1种** 种方法刷
 
 ### 修改脚本
 
-修改 **bilibili.py** 脚本, 将视频的id号放入到bvids数组中
+修改 [bilibili.py](./bilibili.py) 脚本, 将视频的id号放入到bvids数组中
 
 例如:
 
@@ -47,7 +104,6 @@ pip install requests
 
 python bilibili.python
 ```
-
 
 ## 代理池
 

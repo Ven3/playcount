@@ -1,22 +1,9 @@
 import requests
-import time,datetime
+import time
 
 # BVID放这里 格式: ["视频1id","视频2id","视频3id"...], BV号获取 https://www.bilibili.com/video/{这里就是BVID}/
 
 bvids = []
-
-
-# 代理池配置 Proxy 1 来自: germey/proxypool, Proxy 2 来自 jhao104/proxy_pool
-# proxypool={"url":"http://192.168.1.4:5555/random","type":"1"}
-proxypool={"url":"http://192.168.1.4:5010/get","type":"2"}
-
-# 获取代理
-def get_proxy():
-    response = requests.get(proxypool.get("url"))
-    if proxypool.get("type") == "1":
-        return response.text
-    else:
-        return response.json().get("proxy")
     
 def print_log(msg):
     # 直接print()在Docker中不会显示, 所以要家flush=True
@@ -27,7 +14,7 @@ reqdatas = []
 for bvid in bvids:
     stime = str(int(time.time()))
     
-    resp = requests.get("https://api.bilibili.com/x/web-interface/view?bvid={}".format(bvid), proxies={"http": "http://{}".format(get_proxy())})
+    resp = requests.get("https://api.bilibili.com/x/web-interface/view?bvid={}".format(bvid))
     rdata = resp.json()["data"]
     data= {
         'aid':rdata["aid"],
@@ -59,7 +46,6 @@ def goPlay(url):
     count = 0
     while True:
         try:
-            proxy = get_proxy()
             #发起一个post请求，去请求这个页面，从而获得一次点击量
             for data in reqdatas:
                 stime = str(int(time.time()))
@@ -67,9 +53,9 @@ def goPlay(url):
                 data["stime"]=stime
                 headers["referer"]="https://www.bilibili.com/video/{}/".format(data.get("bvid"))
                 
-                print_log("proxy: {}, bvid: {}, title: {}".format(proxy, data.get("bvid"), data.get("title")))
+                print_log("bvid: {}, title: {}".format(data.get("bvid"), data.get("title")))
                 
-                requests.post(url, data=data, headers=headers, proxies={"http": "http://{}".format(proxy)})
+                requests.post(url, data=data, headers=headers)
 
             count += 1
             print_log(count)
