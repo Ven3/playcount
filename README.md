@@ -1,12 +1,12 @@
 # PlayCount
 
-## Desc
+## 项目说明
 
 为bilibili而来, 用来刷B站播放量, 懂的都懂
 
-## 使用方式 - 推荐使用第1种方式
+## 使用方式 - 推荐使用方式1 或 方式2
 
-### shell脚本 + 浏览器方式:
+### 方式 1: shell脚本 + 浏览器方式:
 
 仅Windows可用, 编辑 [bilibili.sh](./bilibili.sh) 脚本, 修改 **bvid** 和 **profiles** 两个参数, 然后直接执行该脚本即可, 需要注意的是, 最好安装git客户端, 用 git-bash 来跑, 有时候 powershell可能跑失败
 Tips: 如果是多个浏览器, 建议每个浏览器登录不同的账号, 这样效率会高一点
@@ -15,7 +15,7 @@ Tips: 如果是多个浏览器, 建议每个浏览器登录不同的账号, 这�
 
 ![1699284501664](image/README/1699284501664.png)
 
-### 使用 **python** 运行 且 **不使用代理池** :
+### 方式 2: 使用 **python** 运行 且 **不使用代理池** :
 
 修改 [bilibili_noproxy.py](./bilibili_noproxy.py) 文件, 将bvid填写到bvids里面, 然后在终端执行下面命令即可
 
@@ -28,7 +28,7 @@ python bilibili_noproxy.py
 
 ![1699284888241](image/README/1699284888241.png)
 
-### 使用 **docker** + **代理池** :
+### 方式 3: 使用 **docker** + **代理池** :
 
 **目前该方案我在实际使用的过程中效果跟第2种方法是一样的, 代理池使用了还是不管用, emmm, 所以你自己慢慢研究吧**
 **优点**: docker执行, 可以使用代理池, 不依赖浏览器, 只需要调用接口就能刷播放量
@@ -122,3 +122,13 @@ Proxy 2 来自: [jhao104/proxy_pool](https://github.com/jhao104/proxy_pool)
 1. 每次请求后要sleep(100)才能继续, 即使使用了代理也不能随便浪
 2. 并不是所有的视频都能刷播放量
 3. **慎用**, **慎用**, **慎用**
+
+## 代码贡献者
+
+<a href="https://github.com/Ven3/playcount/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Ven3/playcount" />
+</a>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Ven3/playcount&type=Date)](https://star-history.com/#Ven3/playcount&Date)
