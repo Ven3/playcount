@@ -9,12 +9,22 @@ def print_log(msg):
     # 直接print()在Docker中不会显示, 所以要家flush=True
     print(msg, flush=True)
 
+
+#主要是调用B站的API来实现刷播放量
+headers = {
+    'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'Accept-Language': 'zh-CN,zh;q=0.9',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Origin': 'https://www.bilibili.com',
+    'Connection': 'keep-alive'
+}
+
 # 构建我们要刷这个视频的基本参数
 reqdatas = []
 for bvid in bvids:
     stime = str(int(time.time()))
-    
-    resp = requests.get("https://api.bilibili.com/x/web-interface/view?bvid={}".format(bvid))
+    resp = requests.get("https://api.bilibili.com/x/web-interface/view?bvid={}".format(bvid), headers=headers)
     rdata = resp.json()["data"]
     data= {
         'aid':rdata["aid"],
@@ -30,17 +40,6 @@ for bvid in bvids:
         'title': rdata["title"]
     }
     reqdatas.append(data)
-
-
-#主要是调用B站的API来实现刷播放量
-headers = {
-    'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-    'Accept-Language': 'zh-CN,zh;q=0.9',
-    'Accept-Encoding': 'gzip, deflate, br',
-    'Origin': 'https://www.bilibili.com',
-    'Connection': 'keep-alive'
-}
 
 def goPlay(url):
     count = 0

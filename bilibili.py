@@ -10,6 +10,16 @@ bvids = []
 # proxypool={"url":"http://192.168.1.4:5555/random","type":"1"}
 proxypool={"url":"http://192.168.1.4:5010/get","type":"2"}
 
+# 构建我们要刷这个视频的基本参数
+headers = {
+    'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'Accept-Language': 'zh-CN,zh;q=0.9',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Origin': 'https://www.bilibili.com',
+    'Connection': 'keep-alive'
+}
+
 # 获取代理
 def get_proxy():
     response = requests.get(proxypool.get("url"))
@@ -22,12 +32,10 @@ def print_log(msg):
     # 直接print()在Docker中不会显示, 所以要家flush=True
     print(msg, flush=True)
 
-# 构建我们要刷这个视频的基本参数
 reqdatas = []
 for bvid in bvids:
     stime = str(int(time.time()))
-    
-    resp = requests.get("https://api.bilibili.com/x/web-interface/view?bvid={}".format(bvid), proxies={"http": "http://{}".format(get_proxy())})
+    resp = requests.get("https://api.bilibili.com/x/web-interface/view?bvid={}".format(bvid), proxies={"http": "http://{}".format(get_proxy())}, headers=headers)
     rdata = resp.json()["data"]
     data= {
         'aid':rdata["aid"],
@@ -46,15 +54,6 @@ for bvid in bvids:
 
 
 #主要是调用B站的API来实现刷播放量
-headers = {
-    'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-    'Accept-Language': 'zh-CN,zh;q=0.9',
-    'Accept-Encoding': 'gzip, deflate, br',
-    'Origin': 'https://www.bilibili.com',
-    'Connection': 'keep-alive'
-}
-
 def goPlay(url):
     count = 0
     while True:
@@ -63,14 +62,10 @@ def goPlay(url):
             #发起一个post请求，去请求这个页面，从而获得一次点击量
             for data in reqdatas:
                 stime = str(int(time.time()))
-                
                 data["stime"]=stime
                 headers["referer"]="https://www.bilibili.com/video/{}/".format(data.get("bvid"))
-                
                 print_log("proxy: {}, bvid: {}, title: {}".format(proxy, data.get("bvid"), data.get("title")))
-                
                 requests.post(url, data=data, headers=headers, proxies={"http": "http://{}".format(proxy)})
-
             count += 1
             print_log(count)
             # 刷一次要休息100s, 即使有连接池貌似也不能随便刷, 你可以研究下
